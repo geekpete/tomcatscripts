@@ -82,7 +82,7 @@ stop() {
     count=0;
     until [ `ps -p $pid | grep -c $pid` = '0' ] || [ $count -gt $kwait ]
     do
-      echo -n -e "\n\e[00;31mwaiting for processes to exit\e[00m";
+      echo -n -e "\n\e[00;31mwaiting for processes to exit\e[00m\n";
       sleep 1
       let count=$count+1;
     done
