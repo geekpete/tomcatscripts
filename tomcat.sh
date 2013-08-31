@@ -1,25 +1,18 @@
 #!/bin/bash
 #
-# chkconfig: - 85 15
-# description: tomcat service
-#
-# Tomcat start/stop/status script
-# https://github.com/geekpete/tomcatscripts
-#
+# Tomcat 7 start/stop/status script
 # Forked from: https://gist.github.com/valotas/1000094
 # @author: Miglen Evlogiev <bash@miglen.com>
+# @updates: Peter Dyson <pete@geekpete.com>
 # Release updates:
 # - Updated method for gathering pid of the current proccess
 # - Added usage of CATALINA_BASE
 # - Added coloring and additional status
 # - Added check for existence of the tomcat user
-# Updates by Peter Dyson <pete@geekpete.com>
-# - Added custom port prefix to configure multiple tomcat containers in a single host (if server.xml is configured/templated correctly)
-# - Added RHEL chkconfig init compatibility
-# - Added optional email notification functionality
-# - Minor fixes to make shutdown look prettier
-#
-# Location of JAVA_HOME (bin files) 
+# - 
+ 
+# 
+# -Location of JAVA_HOME (bin files) 
 # either use default java - resolution is done dynamically
 #export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:jre/bin/java::")
 
@@ -95,9 +88,8 @@ CUSTOM_PARAMETERS="-Dcustom.jvm.route=${JVM_ROUTE} -Dcustom.http.port=${HTTP_POR
 
 # Other options you can enable/configure here:
 GC_LOG_OPTS="-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -Xloggc:${LOGS_DIR}/gc.log"
-GC_OPTS="-XX:PermSize=<%= @java_permsize %> -XX:MaxPermSize=<%= @java_maxpermsize %> -XX:+UseParallelGC -XX:-UseGCOverheadLimit"
-MEM_OPTS="-Xms<%= @java_min_heap %> -Xmx<%= @java_max_heap %> -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=$LOGS_DIR"
-#SNMP_OPTS="-Dcom.sun.management.snmp.port=${SNMP_PORT} -Dcom.sun.management.snmp.interface=0.0.0.0 -Dcom.sun.management.snmp.acl.file=whateversnmp.acl"
+GC_OPTS="-XX:PermSize=64m -XX:MaxPermSize=256m -XX:+UseParallelGC -XX:-UseGCOverheadLimit"
+MEM_OPTS="-Xms256m -Xmx2500m -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=$LOGS_DIR"
 #JMX_OPTS should be reviewed for security requirements - ssl/authentication.
 #JMX_OPTS="-Djmx.rmi.registry.port=${JMXRMI_PORT} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=${JMX_PORT} -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
 OTHER_OPTS="-server -Dfile.encoding=utf8 -XX:+AggressiveOpts"
@@ -154,9 +146,7 @@ stop() {
 	if [ -n "$pid" ]
 	then
 		echo -e "\e[00;31mStopping Tomcat\e[00m"
-		# re-export the JAVA_OPTS variable without the ${SNMP_OPTS} and ${JMX_OPTS} environment variables to avoid "port already in use" error that prevents clean shutdown.
-		export JAVA_OPTS="${CUSTOM_PARAMETERS} ${GC_OPTS} ${GC_LOG_OPTS} ${MEM_OPTS} ${SSL_OPTS} ${APP_OPTS} ${PROXY_OPTS} ${OTHER_OPTS}"
-       	sh $CATALINA_HOME/bin/shutdown.sh
+        	sh $CATALINA_HOME/bin/shutdown.sh
 		let kwait=$SHUTDOWN_WAIT
 		count=0;
                 echo -n -e "\n\e[00;31mwaiting for processes to exit..\e[00m";
