@@ -59,9 +59,13 @@ PORT_PREFIX=80
 # Or use a custom port prefix:
 #PORT_PREFIX=123
 
+# Set appBase dir if different from default "webapps/" appBase
+# Otherwise leave commented if using standard webapps dir inside CATALINA_BASE
+#APPBASE_DIR="deploy"
 
-# Force redeploy on startup - not yet implemented
-# Ensures the exploded war dirs in webapps are always wiped on startup, not an issue if using tomcat manager to deploy
+# Force redeploy on startup
+# Ensures all exploded war dirs in appBase (default is webapps/) are always wiped on startup, not an issue if using tomcat manager to deploy.
+# Warning - this will wipe all dirs inside your appBase and ensures a full/clean exploded redeploy of wars.
 #FORCE_REDEPLOY=true
 
 # JAVA debug options (Java Platform Debug Architecture) used by Tomcat
@@ -126,6 +130,22 @@ start() {
 	then
 		echo -e "\e[00;31mTomcat is already running (pid: $pid)\e[00m"
 	else
+		# check if FORCE_WIPE is enabled and remove exploded dirs from appBase dir
+		if [ $FORCE_REDEPLOY == "true" ];
+		then
+			# if custom APPBASE_DIR variable is NOT set at the top of the script, default to standard webapps dir.
+			if [ ! -n $APPBASE_DIR ]; then
+				APPBASE_DIR="webapps"
+			fi
+
+			for curDir in `ls -1 $CATALINA_BASE/deploy`
+			do
+				if [ -d $CATALINA_BASE/$APPBASE_DIR/$curDir ];
+				then
+					rm -rf $CATALINA_BASE/$APPBASE_DIR/$curDir
+				fi
+			done
+		fi
 		# Start tomcat
 		echo -e "\e[00;32mStarting tomcat\e[00m"
 		if [ `user_exists $TOMCAT_USER` = "1" ]
