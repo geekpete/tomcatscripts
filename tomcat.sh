@@ -102,9 +102,13 @@ CUSTOM_PARAMETERS="-Dcustom.jvm.route=${JVM_ROUTE} -Dcustom.http.port=${HTTP_POR
 GC_LOG_OPTS="-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -Xloggc:${LOGS_DIR}/gc.log"
 GC_OPTS="-XX:PermSize=64m -XX:MaxPermSize=256m -XX:+UseParallelGC -XX:-UseGCOverheadLimit"
 MEM_OPTS="-Xms256m -Xmx512m -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=$LOGS_DIR"
-SNMP_OPTS="-Dcom.sun.management.snmp.port=${SNMP_PORT} -Dcom.sun.management.snmp.interface=0.0.0.0 -Dcom.sun.management.snmp.acl.file=/path/to/mysnmp.acl"
+
+# SNMP is not supported by OpenJDK, try Oracle JDK for this feature, disabled by default.
+#SNMP_OPTS="-Dcom.sun.management.snmp.port=${SNMP_PORT} -Dcom.sun.management.snmp.interface=0.0.0.0 -Dcom.sun.management.snmp.acl.file=/path/to/mysnmp.acl"
+
 #JMX_OPTS should be reviewed for security requirements - ssl/authentication.
 #JMX_OPTS="-Djmx.rmi.registry.port=${JMXRMI_PORT} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=${JMX_PORT} -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
+
 OTHER_OPTS="-server -Dfile.encoding=utf8 -XX:+AggressiveOpts"
 #SSL_OPTS="-Djavax.net.ssl.trustStore=ssl/mykeystore.jks -Djavax.net.ssl.keyStorePassword=somepassword"
 #PROXY_OPTS="-Dhttp.nonProxyHosts=10.0.0.1|localhost -Dhttps.nonProxyHosts=10.0.0.1|whateversite.mydomain -Dhttp.proxyHost=myproxy.mydomain -Dhttp.proxyPort=3128"
