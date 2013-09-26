@@ -110,9 +110,6 @@ OTHER_OPTS="-server -Dfile.encoding=utf8 -XX:+AggressiveOpts"
 #PROXY_OPTS="-Dhttp.nonProxyHosts=10.0.0.1|localhost -Dhttps.nonProxyHosts=10.0.0.1|whateversite.mydomain -Dhttp.proxyHost=myproxy.mydomain -Dhttp.proxyPort=3128"
 #APP_OPTS="-javaagent:$CATALINA_BASE/lib/org.springframework.instrument-3.0.2.RELEASE.jar -Dexternal.config.dir=${CATALINA_BASE}/config"
 
-# Glue together all the options that were set and export them as JAVA_OPTS
-export JAVA_OPTS="${CUSTOM_PARAMETERS} ${GC_OPTS} ${GC_LOG_OPTS} ${MEM_OPTS} ${JMX_OPTS} ${SSL_OPTS} ${APP_OPTS} ${PROXY_OPTS} ${OTHER_OPTS} ${SNMP_OPTS} "
-
 SCRIPTNAME=`basename $0`
 
 
@@ -130,6 +127,9 @@ start() {
 	then
 		echo -e "\e[00;31mTomcat is already running (pid: $pid)\e[00m"
 	else
+		# Glue together all the options that were set and export them as JAVA_OPTS
+		export JAVA_OPTS="${CUSTOM_PARAMETERS} ${GC_OPTS} ${GC_LOG_OPTS} ${MEM_OPTS} ${JMX_OPTS} ${SSL_OPTS} ${APP_OPTS} ${PROXY_OPTS} ${OTHER_OPTS} ${SNMP_OPTS} "
+		
 		# check if FORCE_WIPE is enabled and remove exploded dirs from appBase dir
 		if [ $FORCE_REDEPLOY == "true" ];
 		then
