@@ -175,8 +175,10 @@ status(){
 	if [ -n "$pid" ];
 	then 
 		echo -e "\e[00;32mTomcat is running with pid: $pid\e[00m"
+		exit 0
 	else 
 		echo -e "\e[00;31mTomcat is not running\e[00m"
+		exit 1
 	fi
 }
  
